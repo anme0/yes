@@ -1,23 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stopwatch PWA</title>
-  <link rel="manifest" href="manifest.json" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111111"/>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>PWA Stopwatch</title>
   <style>
-    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
-    #time { font-size: 3em; margin: 20px; }
-    button { font-size: 1.2em; margin: 10px; padding: 10px 20px; }
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif; }
+    body { margin: 0; background: #0f0f10; color: #fff; display: grid; min-height: 100svh; }
+    .wrap { margin: auto; width: min(680px, 92vw); text-align: center; }
+    h1 { font-weight: 700; margin: 16px 0 8px; letter-spacing: .3px; }
+    .time { font-variant-numeric: tabular-nums; font-size: clamp(40px, 10vw, 72px); line-height: 1.1; margin: 16px 0 10px; }
+    .sub { opacity: .7; font-size: 14px; margin-bottom: 20px; }
+    .row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    button {
+      font: inherit; padding: 12px 18px; border-radius: 12px; border: 1px solid #444;
+      background: #1b1b1d; color: #fff; cursor: pointer; min-width: 120px;
+    }
+    button.primary { background: #2b6ef6; border-color: #2b6ef6; }
+    button.warn { background: #f6532b; border-color: #f6532b; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #333; border-radius: 999px; }
+    label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+    input[type=checkbox] { width: 18px; height: 18px; }
+    .laps { margin-top: 22px; text-align: left; max-height: 40vh; overflow: auto; border-top: 1px solid #222; }
+    .lap { display: flex; justify-content: space-between; padding: 10px 6px; border-bottom: 1px dashed #222; }
+    .install { margin-top: 18px; }
+    .hint { opacity: .65; font-size: 12px; margin-top: 6px; }
+    a { color: #7fb0ff; text-decoration: none; }
   </style>
 </head>
 <body>
-  <h1>⏱️ Stopwatch</h1>
-  <div id="time">00:00:00</div>
-  <button onclick="start()">Start</button>
-  <button onclick="stop()">Stop</button>
-  <button onclick="reset()">Reset</button>
+  <div class="wrap">
+    <h1>PWA Stopwatch</h1>
+    <div class="time" id="time">00:00:00.000</div>
+    <div class="sub" id="status">Ready</div>
 
-  <script src="app.js"></script>
+    <div class="row" style="margin:16px 0">
+      <button id="start" class="primary">Start</button>
+      <button id="lap" disabled>Lap</button>
+      <button id="pause" disabled>Pause</button>
+      <button id="reset" class="warn" disabled>Reset</button>
+    </div>
+
+    <div class="row" style="margin:10px 0 6px">
+      <span class="pill">
+        <label title="If supported, stopwatch will auto-pause when the device is LOCKED. App switching won't pause it.">
+          <input type="checkbox" id="pauseOnLock">
+          Pause when device locks (beta)
+        </label>
+      </span>
+      <span class="pill" id="installPill" hidden>
+        <button id="installBtn">Install app</button>
+      </span>
+    </div>
+    <div class="hint">Works offline. Continues accurately even in background or after closing.</div>
+
+    <div class="laps" id="laps"></div>
+  </div>
+
+  <script src="app.js" type="module"></script>
 </body>
 </html>
