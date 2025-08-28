@@ -1,10 +1,10 @@
 let startTime = null;
 let elapsed = 0;
-let timer = null;
 let running = false;
 
 function updateDisplay() {
-  const total = elapsed + (running ? Date.now() - startTime : 0);
+  const now = Date.now();
+  const total = elapsed + (running ? now - startTime : 0);
   const hrs = Math.floor(total / 3600000);
   const mins = Math.floor((total % 3600000) / 60000);
   const secs = Math.floor((total % 60000) / 1000);
@@ -15,29 +15,28 @@ function updateDisplay() {
 function start() {
   if (!running) {
     startTime = Date.now();
-    timer = setInterval(updateDisplay, 1000);
     running = true;
+    requestAnimationFrame(tick);
   }
 }
 
 function stop() {
   if (running) {
     elapsed += Date.now() - startTime;
-    clearInterval(timer);
     running = false;
-    updateDisplay();
   }
 }
 
 function reset() {
   elapsed = 0;
   startTime = null;
-  clearInterval(timer);
   running = false;
   updateDisplay();
 }
 
-// Pause when screen goes off or tab is hidden
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) stop();
-});
+function tick() {
+  if (running) {
+    updateDisplay();
+    requestAnimationFrame(tick);
+  }
+}
